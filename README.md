@@ -8,33 +8,50 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```bash
-Give examples
-```
+This app works with python 3.6 and virtual env ([see](http://www.dropwizard.io/1.0.2/docs/) how to install)
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
+#### Clone repository
 
 ```bash
-Give the example
+git clone https://github.com/EtienneSeck/3percent.git
 ```
 
-And repeat
+#### Set up virtual env
 
 ```bash
-until finished
+cd 3percent
+python3 -m venv 3pvenv
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+#### Activate virtual env
 
-## Running the tests
+##### For linux
 
-Explain how to run the automated tests for this system
+```bash
+source 3pvenv/bin/activate
+```
+
+##### For Windows
+
+```cmd
+3pvenv\Script\activate.bat
+```
+
+#### Upgrade pip and Install requirements.txt
+
+```cmd
+pip install -U pip
+pip install -r requirements.txt
+```
+
+## Running Test
+
+```bash
+cd src
+python run.py
+```
 
 ### Break down into end to end tests
 
@@ -68,7 +85,7 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## Authors
 
@@ -85,4 +102,3 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 * Hat tip to anyone whose code was used
 * Inspiration
 * etc
-
