@@ -1,6 +1,6 @@
-# Project Title
+# 3Percent
 
-One Paragraph of project description goes here
+DESCRIPTION
 
 ## Getting Started
 
