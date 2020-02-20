@@ -3,27 +3,28 @@ import networkx as nx
 
 class Organigramme :
 
-    def __init__(self,shareolders,buildings) :
+    def __init__(self,properties,shareolders) :
         """ Constructor
 
         Arguments:
             shareolders {pandas.core.frame.DataFrame} -- [DataFrame of shareolders]
             buildings {pandas.core.frame.DataFrame} -- [DataFrame of buildings]
         """
-        
+
+        self.properties = properties
         self.shareolders = shareolders
-        self.buildings = buildings
+        
         self.G = nx.DiGraph()
 
     def build(self) :
         """ Build organigramme Graph
         """
 
-        self.building_nodes = []
-        for e1,e2,e3 in zip(self.buildings.iloc[:,2],self.buildings.iloc[:,6],self.buildings.iloc[:,5]) :
+        self.properties_nodes = []
+        for e1,e2,e3 in zip(self.properties.iloc[:,2],self.properties.iloc[:,6],self.properties.iloc[:,5]) :
             self.G.add_node(e1 , value = e3)
-            self.G.add_edge(e1 , e2,shares = 1.)
-            self.building_nodes.append(e1)
+            self.G.add_edge(e1 , e2, shares = 1.)
+            self.properties_nodes.append(e1)
 
         self.shareolder_nodes = []
         for e1,e2,e3 in zip(self.shareolders.iloc[:,0],self.shareolders.iloc[:,1],self.shareolders.iloc[:,3]) : 
@@ -41,13 +42,13 @@ class Organigramme :
         """
         return self.shareolder_nodes
 
-    def get_buildings(self) :
-        """Getter for buildings nodes
+    def get_properties(self) :
+        """Getter for properties nodes
         
         Returns:
             list -- Return a list of buildings
         """
-        return self.building_nodes
+        return self.properties_nodes
 
     def compute_share(self,entitie) :
         """Compute the total holding that the entitie shares
@@ -61,8 +62,8 @@ class Organigramme :
 
         total = 0.
 
-        for building in self.building_nodes :
-            for path in map(nx.utils.pairwise, nx.all_simple_paths(self.G,building,entitie)):
+        for propertie in self.properties_nodes :
+            for path in map(nx.utils.pairwise, nx.all_simple_paths(self.G,propertie,entitie)):
                 edges = [(e1,e2) for e1,e2 in path]
                 path_amount = 1.0
                 for edge in edges :
@@ -105,9 +106,9 @@ class Organigramme :
         return
         pos = graphviz_layout(G, prog='dot')
 
-        nx.draw_networkx_nodes(G,pos,nodelist = building_nodes , node_color = 'red', node_shape = '^' , node_size = 1000 )
+        nx.draw_networkx_nodes(G,pos,nodelist = properties_nodes , node_color = 'red', node_shape = '^' , node_size = 1000 )
         nx.draw_networkx_nodes(G,pos,nodelist = shareolder_nodes , node_color = 'yellow', node_shape = 's' , node_size = 1000)
-        nx.draw_networkx_labels(G,pos,labels = {key:value for key,value in zip(building_nodes,building_nodes)})
+        nx.draw_networkx_labels(G,pos,labels = {key:value for key,value in zip(properties_nodes,properties_nodes)})
         nx.draw_networkx_labels(G,pos,labels = {key:value for key,value in zip(shareolder_nodes,shareolder_nodes)}, font_size = 8)
         nx.draw_networkx_edge_labels(G,pos,edge_labels= nx.get_edge_attributes(G,'display_shares'))
         nx.draw_networkx_edges(G,pos)

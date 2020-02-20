@@ -1,13 +1,9 @@
 
+from config import *
 
 import pdfrw
 import time
 import os
-
-FIELDS_PROP = {
-    'year' : {'length' : 4 , 'type' : 'str', 'index' : 0},
-    'siret' : {'length' : 14 , 'type' : 'seq', 'index' : 1}
-}
 
 class PDF :
 
@@ -39,7 +35,7 @@ class PDF :
         self.template_pdf.Root.AcroForm.Fields[field['index']].update(pdfrw.PdfDict(V = pdfrw.PdfString(update_value)))
 
     def fill_at(self,form_id,value) :
-        field = FIELDS_PROP[form_id]
+        field = FIELDS_PDF[form_id]
         value = str(value)
         if len(value) == field['length'] : 
             self.update(field,value)
