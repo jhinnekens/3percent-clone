@@ -4,11 +4,20 @@ import networkx as nx
 class Organigramme :
 
     def __init__(self,shareolders,buildings) :
+        """ Constructor
+
+        Arguments:
+            shareolders {pandas.core.frame.DataFrame} -- [DataFrame of shareolders]
+            buildings {pandas.core.frame.DataFrame} -- [DataFrame of buildings]
+        """
+        
         self.shareolders = shareolders
         self.buildings = buildings
         self.G = nx.DiGraph()
 
     def build(self) :
+        """ Build organigramme Graph
+        """
 
         self.building_nodes = []
         for e1,e2,e3 in zip(self.buildings.iloc[:,2],self.buildings.iloc[:,6],self.buildings.iloc[:,5]) :
@@ -25,13 +34,32 @@ class Organigramme :
         self.shareolder_nodes = list(set(self.shareolder_nodes))
 
     def get_shareolders(self) :
+        """ Getter for shareolders nodes
+        
+        Returns:
+            list -- Return a list of shareolders
+        """
         return self.shareolder_nodes
 
     def get_buildings(self) :
+        """Getter for buildings nodes
+        
+        Returns:
+            list -- Return a list of buildings
+        """
         return self.building_nodes
 
     def compute_share(self,entitie) :
-        total = 0
+        """Compute the total holding that the entitie shares
+        
+        Arguments:
+            entitie {str} -- entitie name
+        
+        Returns:
+            float -- Total holding shared by the entitie
+        """
+
+        total = 0.
 
         for building in self.building_nodes :
             for path in map(nx.utils.pairwise, nx.all_simple_paths(self.G,building,entitie)):
@@ -43,7 +71,34 @@ class Organigramme :
 
         return round(total)
 
+    def children(self,entitie) :
+        """ Return entities which shared the given entitie
+        
+        Arguments:
+            entitie {str} -- parent entitie
+        
+        Returns:
+            list -- A list of entities
+        """
+        return [child for child in self.G.successors(entitie)]
+    
+    def parents(self,entitie) : 
+        """ Return entities which are shared by the given entitie
+        
+        Arguments:
+            entitie {str} -- child entitie
+        
+        Returns:
+            list -- A list of entities
+        """
+        return [parent for parent in self.G.predecessors(entitie)]
+
     def info(self) :
+        """ Compute general infos about organigramme graph
+        
+        Returns:
+            str -- return number of edges,nodes and average degrees
+        """
         return str(nx.info(self.G))
 
     def draw(self) :

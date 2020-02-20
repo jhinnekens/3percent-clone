@@ -1,14 +1,19 @@
+from config import *
 from flask import render_template , jsonify, request
 from app import app
 from werkzeug.utils import secure_filename
 from .pdfWR import PDF
+from .inputFile import InputFile
+from .organigramme import Organigramme
+
 import json
 import os
 import sys
 import pandas as pd
 
-app.config['UPLOAD_FOLDER'] = 'app/temp/'
+#app.config['UPLOAD_FOLDER'] = 'app/temp/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','xlsx'])
+
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -49,23 +54,25 @@ def upload_file():
 		if file and allowed_file(file.filename):
     		## Upload file :
 			filename = secure_filename(file.filename)
-			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+			file.save(os.path.join(UPLOAD_FOLDER, filename))
 
 			## Read file
-			Entities =  pd.read_excel(os.path.join(app.config['UPLOAD_FOLDER'], filename),
-			sheet_name = 'Entities information')
+			Ifile = InputFile(os.path.join(UPLOAD_FOLDER, filename))
 
-			## Process file
-			app.logger.info(int(Entities['Siret Number for French entities'][0]))
+			## Check error @ToDo
+
+			## Build Organigramme
+			organigramme = Organigramme(Ifile.get_shareolders(),Ifile.get_properties())
+			organigramme.build()
 			
-			cerfa = PDF('2746-sd_2589')
-			cerfa.read_template()
-			cerfa.fill_at('year',2020)
-			cerfa.fill_at('siret',int(Entities['Siret Number for French entities'][0]))
-			cerfa.write_pdf()
+			#cerfa = PDF('2746-sd_2589')
+			#cerfa.read_template()
+			#cerfa.fill_at('year',2020)
+			#cerfa.fill_at('siret',int(Entities['Siret Number for French entities'][0]))
+			#cerfa.write_pdf()
 
 			## Remove uploaded file
-			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+			os.remove(os.path.join(UPLOAD_FOLDER, filename))
 			success = True
 		else:
 			errors[file.filename] = 'File type is not allowed'
