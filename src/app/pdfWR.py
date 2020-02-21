@@ -7,7 +7,15 @@ import os
 
 class PDF :
 
-    def __init__(self,template_id,path = None) : 
+    def __init__(self,template_id,path = None) :
+        """[summary]
+        
+        Arguments:
+            template_id {[type]} -- [description]
+        
+        Keyword Arguments:
+            path {[type]} -- [description] (default: {None})
+        """
         self.template_id = template_id
         self.writer = pdfrw.PdfWriter()
         self.annexes = []
@@ -69,5 +77,3 @@ class PDF :
 #cerfa.writer.addpages(blank.template_pdf.pages)
 
 #cerfa.write_pdf()
-
-
