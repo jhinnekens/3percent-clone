@@ -16,3 +16,9 @@ orga = Organigramme()
 orga.build(input)
 
 print(orga.compute_share('LAVA SUD 14 Holdco B.V.'))
+
+
+#### Test PDF ####
+
+
+input.write_cerfa()

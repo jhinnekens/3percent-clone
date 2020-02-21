@@ -23,8 +23,9 @@ DIRECT_SHAREOLDER = 'Direct_shareolder'
 
 ENTITIES_MAP = {
     ENTITIES_NODE_INDEX : 0,
-    'SIRET' : 2,
-    'Number_shares' : 5
+    'Siret' : 2,
+    'Number_shares' : 5,
+    'Adresse' : 3
 }
 
 PROPERTIES_MAP = {
@@ -44,9 +45,11 @@ SHAREOLDERS_MAP = {
 
 
 FIELDS_PDF = {
-    'Year' : {'length' : 4 , 'type' : 'str', 'index' : 0 , 'value' : None},
-    'Siret' : {'length' : 14 , 'type' : 'seq', 'index' : 1 , 'value' : None},
-    'Adresse' : {'length' : 100 , 'type' : 'seq', 'index' : 2 , 'value' : None},
-    
+    'Year' : {'length' : 4 , 'type' : 'seq', 'index' : '(PAGE1_ANNEE)'},
+    'Siret' : {'length' : 14 , 'type' : 'seq', 'index' : '(PAGE1_SIRET)'},
+    'Report1' : {'length' : 14 , 'type' : 'seq', 'index' : '(PAGE1_VALEUR_VENALE_A_REPORTER)'},
+    'IdRepresentant' : {'length' : 100 , 'type' : 'seq', 'index' : '(PAGE1_IDENTITE_REPRESENTANT)'},
+    'AdresseLigne' : {'length' : 100 , 'type' : 'seq', 'index' : '(PAGE1_ADRESSE_LIGNE1)'},
+    'Denomination_entite' : {'length' : 100 , 'type' : 'seq', 'index' : '(PAGE1_DENOMINATION_ENTITEE)'}
 }
 

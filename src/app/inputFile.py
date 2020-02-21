@@ -1,4 +1,5 @@
 from config import *
+from .pdfWR import PDF
 import pandas as pd
 import math
 
@@ -74,3 +75,16 @@ class InputFile :
         self.read_all()
         self.clean_all()
         self.check_all()
+
+    def write_cerfa(self) : 
+        Pdfrw = PDF()
+        Pdfrw.read_template()
+        Pdfrw.fill_at('Year',2020)
+        Pdfrw.fill_at('Siret',int(self.entities['Siret'][0]))
+        Pdfrw.fill_at('Denomination_entite','SCI Perisud 112, avenue Kléber 75784 Paris Cedex 16 ')
+        Pdfrw.fill_at('IdRepresentant',"PwC Société d'Avocats (à l'attention de PRENOM NOM)")
+        Pdfrw.fill_at('AdresseLigne',"Crystal Park 61 Rue de Villiers 92208 Neuilly-sur-Seine Cedex France")
+        Pdfrw.fill_at('Report1',1256945)
+
+
+        Pdfrw.write_pdf()

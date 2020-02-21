@@ -7,7 +7,7 @@ import os
 
 class PDF :
 
-    def __init__(self,template_id,path = None) :
+    def __init__(self,path = None) :
         """[summary]
         
         Arguments:
@@ -16,9 +16,10 @@ class PDF :
         Keyword Arguments:
             path {[type]} -- [description] (default: {None})
         """
-        self.template_id = template_id
+
         self.writer = pdfrw.PdfWriter()
         self.annexes = []
+        self.template_id = '2746-sd_2589'
         if path is None :
             self.path = 'app/data/cerfa/'
         else :
@@ -26,6 +27,7 @@ class PDF :
 
     def read_template(self) :
         template_pdf = pdfrw.PdfReader(self.path + self.template_id + '.pdf')
+
         try : 
             template_pdf.Root.AcroForm.update(pdfrw.PdfDict(NeedAppearances=pdfrw.PdfObject('true')))
         except : 
@@ -40,12 +42,13 @@ class PDF :
         if field['type'] == 'seq' :
             update_value = '(' + str(value) + ')'
         
-        self.template_pdf.Root.AcroForm.Fields[field['index']].update(pdfrw.PdfDict(V = pdfrw.PdfString(update_value)))
+        #self.template_pdf.Root.AcroForm.Fields[field['index']].update(pdfrw.PdfDict(V = pdfrw.PdfString(update_value)))
+        next(item for item in self.template_pdf.Root.AcroForm.Fields if item['/T'] == field['index']).update(pdfrw.PdfDict(V = pdfrw.PdfString(update_value)))
 
     def fill_at(self,form_id,value) :
         field = FIELDS_PDF[form_id]
         value = str(value)
-        if len(value) == field['length'] : 
+        if len(value) <= field['length'] : 
             self.update(field,value)
         else : 
             print('error')
@@ -59,21 +62,3 @@ class PDF :
     def write_pdf(self) :
         self.writer.write(self.path + self.template_id + time.ctime().replace(' ','_').replace(':','_') + '.pdf',self.template_pdf)
 
-    
-
-#path = 'C:/Users/FR016636/Documents/3percent/app/data/cerfa/'
-#tid = '2746-sd_2589'
-#cerfa = PDF(tid)
-#cerfa.read_template()
-
-#Entities =  pd.read_excel("C:/Users/FR016636/Documents/3percent/app/data/input_xlsx/Fichier de collecte d'information.xlsx",
-#sheet_name = 'Property information')
-
-
-#blank = PDF('blank')
-#blank.read_template()
-
-#cerfa.writer.addpages(cerfa.template_pdf.pages)
-#cerfa.writer.addpages(blank.template_pdf.pages)
-
-#cerfa.write_pdf()
