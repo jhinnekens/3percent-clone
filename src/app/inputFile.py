@@ -1,5 +1,6 @@
 from config import *
 import pandas as pd
+import math
 
 class InputFile :
 
@@ -38,9 +39,38 @@ class InputFile :
 
     def clean_cols(self,df) :
         for col in df :
-            print(col)
-            print(df[col].dtype)
+            if df[col].dtype == 'object' :
+                df[col] = self.clean_strcol(df[col])
 
-    def strip(self,df) :
-        df = df.transform(lambda x : x.strip() if type(x) == 'str' else x)
-    
+            if 'float' in str(df[col].dtype) :
+                df[col] = self.clean_floatcol(df[col])
+
+    def clean_strcol(self,col) : 
+        return(col.apply(lambda x : x.strip()))
+
+    def clean_floatcol(self,col) : 
+        return(col.apply(lambda x : 0 if math.isnan(x) else x))
+
+    def clean_all(self) : 
+        self.clean_cols(self.entities)
+        self.clean_cols(self.properties)
+        self.clean_cols(self.shareolders)
+
+    def check_properties(self) :
+        check = ~self.properties[ENTITIES_NODE_INDEX].isin(self.entities[ENTITIES_NODE_INDEX])
+        return [entitie for entitie in self.properties.loc[check,ENTITIES_NODE_INDEX]]
+
+    def check_shareolders(self) :
+        check = ~self.shareolders[ENTITIES_NODE_INDEX].isin(self.entities[ENTITIES_NODE_INDEX])
+        return [entitie for entitie in self.shareolders.loc[check,ENTITIES_NODE_INDEX]]
+
+    def check_all(self) :
+        check1 = self.check_properties()
+        check2 = self.check_shareolders()
+        if len(check1) or len(check2) : 
+            raise Exception()
+
+    def process(self) : 
+        self.read_all()
+        self.clean_all()
+        self.check_all()

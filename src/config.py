@@ -15,30 +15,38 @@ SHEET_MAP = {
 
 # MAPING COLUMNS INDEX AND GIVES THE COLUMN WHICH WILL BE USE AS NODE INDEX IN ORGANIGRAMME
 
+ENTITIES_NODE_INDEX = 'Entitie_name'
+PROPERTIES_NODE_INDEX = 'Propertie_name'
+PROPERTIE_VALUE = 'Value'
+HOLDING_PERCENTAGE = 'Holding_percentage'
+DIRECT_SHAREOLDER = 'Direct_shareolder'
+
 ENTITIES_MAP = {
-    'Name' : 0,
+    ENTITIES_NODE_INDEX : 0,
     'SIRET' : 2,
     'Number_shares' : 5
 }
 
 PROPERTIES_MAP = {
-    'City' : 2,
-    'Value' : 5,
-    'Direct_owner' : 6
+    PROPERTIES_NODE_INDEX : 2,
+    PROPERTIE_VALUE : 5,
+    ENTITIES_NODE_INDEX : 6
 }
 
 SHAREOLDERS_MAP = {
-    'Name' : 0,
-    'Direct_shareolder' : 1,
-    'Holding_percentage' : 3
+    ENTITIES_NODE_INDEX : 0,
+    DIRECT_SHAREOLDER : 1,
+    HOLDING_PERCENTAGE : 3
 }
-
-ENTITIES_NODE_INDEX = 'Name'
-PROPERTIES_NODE_INDEX = 'City'
 
 #### CERFA CONFIG :
 
+
+
 FIELDS_PDF = {
-    'year' : {'length' : 4 , 'type' : 'str', 'index' : 0},
-    'siret' : {'length' : 14 , 'type' : 'seq', 'index' : 1}
+    'Year' : {'length' : 4 , 'type' : 'str', 'index' : 0 , 'value' : None},
+    'Siret' : {'length' : 14 , 'type' : 'seq', 'index' : 1 , 'value' : None},
+    'Adresse' : {'length' : 100 , 'type' : 'seq', 'index' : 2 , 'value' : None},
+    
 }
+

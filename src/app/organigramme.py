@@ -1,44 +1,46 @@
 import networkx as nx
+from config import *
 
 
 class Organigramme :
 
-    def __init__(self,properties,shareolders) :
+    def __init__(self) :
         """ Constructor
 
         Arguments:
             shareolders {pandas.core.frame.DataFrame} -- [DataFrame of shareolders]
             buildings {pandas.core.frame.DataFrame} -- [DataFrame of buildings]
         """
-
-        self.properties = properties
-        self.shareolders = shareolders
         
         self.G = nx.DiGraph()
 
-    def build(self) :
+    def build(self,inputFile) :
         """ Build organigramme Graph
         """
 
+        self.entities_nodes=[]
+        for index,row in inputFile.entities.iterrows():
+            node_attr = {key:value for key,value in zip(ENTITIES_MAP.keys(),row[list(ENTITIES_MAP.keys())]) if key != ENTITIES_NODE_INDEX}
+            self.G.add_node(row[ENTITIES_NODE_INDEX],**node_attr)
+            self.entities_nodes.append(row[ENTITIES_NODE_INDEX])
+
         self.properties_nodes = []
-        for e1,e2,e3 in zip(self.properties.iloc[:,2],self.properties.iloc[:,6],self.properties.iloc[:,5]) :
-            self.G.add_node(e1 , value = e3)
-            self.G.add_edge(e1 , e2, shares = 1.)
-            self.properties_nodes.append(e1)
+        for index,row in inputFile.properties.iterrows():
+            node_attr = {key:value for key,value in zip(PROPERTIES_MAP.keys(),row[list(PROPERTIES_MAP.keys())]) if key != PROPERTIES_NODE_INDEX}
+            edge_attr = {HOLDING_PERCENTAGE : 1.0}
+            self.G.add_node(row[PROPERTIES_NODE_INDEX],**node_attr)
+            self.G.add_edge(row[PROPERTIES_NODE_INDEX],row[ENTITIES_NODE_INDEX],**edge_attr)
+            self.properties_nodes.append(row[PROPERTIES_NODE_INDEX])
 
-        self.shareolder_nodes = []
-        for e1,e2,e3 in zip(self.shareolders.iloc[:,0],self.shareolders.iloc[:,1],self.shareolders.iloc[:,3]) : 
-            self.G.add_edge(e1,e2,shares = e3 , display_shares = round(e3,3))
-            self.shareolder_nodes.append(e1)
-            self.shareolder_nodes.append(e2)
-
-        self.shareolder_nodes = list(set(self.shareolder_nodes))
-
-    def get_shareolders(self) :
-        """ Getter for shareolders nodes
+        for index,row in inputFile.shareolders.iterrows():
+            edge_attr = {HOLDING_PERCENTAGE : row[HOLDING_PERCENTAGE]}
+            self.G.add_edge(row[ENTITIES_NODE_INDEX],row[DIRECT_SHAREOLDER],**edge_attr)
+    
+    def get_entities(self) :
+        """ Getter for entities nodes
         
         Returns:
-            list -- Return a list of shareolders
+            list -- Return a list of entities
         """
         return self.shareolder_nodes
 
@@ -67,8 +69,8 @@ class Organigramme :
                 edges = [(e1,e2) for e1,e2 in path]
                 path_amount = 1.0
                 for edge in edges :
-                    path_amount = path_amount*self.G.edges[edge]['shares']   
-                total = path_amount*self.G.nodes[building]['value'] + total
+                    path_amount = path_amount*self.G.edges[edge][HOLDING_PERCENTAGE]   
+                total = path_amount*self.G.nodes[propertie][PROPERTIE_VALUE] + total
 
         return round(total)
 

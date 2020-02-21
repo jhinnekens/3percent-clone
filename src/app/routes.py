@@ -57,13 +57,16 @@ def upload_file():
 			file.save(os.path.join(UPLOAD_FOLDER, filename))
 
 			## Read file
-			Ifile = InputFile(os.path.join(UPLOAD_FOLDER, filename))
+			input_file = InputFile(os.path.join(UPLOAD_FOLDER, filename))
 
-			## Check error @ToDo
+			## Check error
+			input_file.process()
 
 			## Build Organigramme
-			organigramme = Organigramme(Ifile.get_shareolders(),Ifile.get_properties())
-			organigramme.build()
+			organigramme = Organigramme()
+			organigramme.build(input_file)
+
+			## 
 			
 			#cerfa = PDF('2746-sd_2589')
 			#cerfa.read_template()
