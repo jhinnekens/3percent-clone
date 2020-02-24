@@ -68,7 +68,6 @@ def upload_file():
 			organigramme = Organigramme()
 			organigramme.build(input_file)
 
-
 			output = CerfaWriter(entitie = 'LAVA SUD 14 Holdco B.V.',orga = organigramme)
 			output.write_cerfa()
 
