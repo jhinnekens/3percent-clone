@@ -52,6 +52,12 @@ class Organigramme :
         """
         return self.properties_nodes
 
+    def entitie(self,entitie) :
+        return self.G.nodes[entitie]
+
+    def entitie_attr(self,entitie,attr) :
+        return self.entitie(entitie)[attr]
+
     def compute_share(self,entitie) :
         """Compute the total holding that the entitie shares
         

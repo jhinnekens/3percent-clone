@@ -1,9 +1,12 @@
 
 from config import *
 
-import pdfrw
+#import pdfrw
 import time
 import os
+
+from PyPDF2 import PdfFileWriter, PdfFileReader
+from PyPDF2.generic import BooleanObject, NameObject, IndirectObject
 
 class PDF :
 
@@ -17,48 +20,61 @@ class PDF :
             path {[type]} -- [description] (default: {None})
         """
 
-        self.writer = pdfrw.PdfWriter()
-        self.annexes = []
         self.template_id = '2746-sd_2589'
         if path is None :
             self.path = 'app/data/cerfa/'
         else :
             self.path = path
 
-    def read_template(self) :
-        template_pdf = pdfrw.PdfReader(self.path + self.template_id + '.pdf')
+        self.inputStream = open(self.path + self.template_id + '.pdf', "rb")
+        self.outputStream = open(self.path + self.template_id + time.ctime().replace(' ','_').replace(':','_') + '.pdf', "wb")
 
-        try : 
-            template_pdf.Root.AcroForm.update(pdfrw.PdfDict(NeedAppearances=pdfrw.PdfObject('true')))
-        except : 
-            self.template_pdf = template_pdf
-        self.template_pdf = template_pdf
+        self.pdf_reader = PdfFileReader(self.inputStream, strict=False)
+        if "/AcroForm" in self.pdf_reader.trailer["/Root"]:
+            self.pdf_reader.trailer["/Root"]["/AcroForm"].update(
+                {NameObject("/NeedAppearances"): BooleanObject(True)})
 
-    def get_at(self,form_id) : 
-        return self.template_pdf.Root.AcroForm.Fields[form_id]
 
-    def update(self,field,value) :
-        update_value = str(value)
-        if field['type'] == 'seq' :
-            update_value = '(' + str(value) + ')'
+        self.pdf_writer = PdfFileWriter()
+        self.set_need_appearances_writer(self.pdf_writer)
+        if "/AcroForm" in self.pdf_writer._root_object:
+            self.pdf_writer._root_object["/AcroForm"].update(
+                {NameObject("/NeedAppearances"): BooleanObject(True)})
+
         
-        #self.template_pdf.Root.AcroForm.Fields[field['index']].update(pdfrw.PdfDict(V = pdfrw.PdfString(update_value)))
-        next(item for item in self.template_pdf.Root.AcroForm.Fields if item['/T'] == field['index']).update(pdfrw.PdfDict(V = pdfrw.PdfString(update_value)))
+    def set_need_appearances_writer(self,writer):
+        # See 12.7.2 and 7.7.2 for more information:
+        # http://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PDF32000_2008.pdf
+        try:
+            catalog = writer._root_object
+            # get the AcroForm tree and add "/NeedAppearances attribute
+            if "/AcroForm" not in catalog:
+                writer._root_object.update({
+                    NameObject("/AcroForm"): IndirectObject(len(writer._objects), 0, writer)})
 
-    def fill_at(self,form_id,value) :
-        field = FIELDS_PDF[form_id]
-        value = str(value)
-        if len(value) <= field['length'] : 
-            self.update(field,value)
-        else : 
-            print('error')
+            need_appearances = NameObject("/NeedAppearances")
+            writer._root_object["/AcroForm"][need_appearances] = BooleanObject(True)
+            return writer
 
-    def add_pages(self) :
-        self.writer.addpages(self.template_pdf.pages)
+        except Exception as e:
+            print('set_need_appearances_writer() catch : ', repr(e))
+            return writer
 
-    def add_annexes(annexes) :
-        return
+    def update(self,field_dictionary) :
+
+        self.pdf_writer.addPage(self.pdf_reader.getPage(0))
+        self.pdf_writer.addPage(self.pdf_reader.getPage(1))
+        self.pdf_writer.updatePageFormFieldValues(self.pdf_writer.getPage(0), field_dictionary)
+
+    def add_page(self,name) :
+        self.annexe_input = open(UPLOAD_FOLDER + str(name) + '.pdf', "rb")
+        self.pdf_writer.addPage(PdfFileReader(self.annexe_input, strict = False).getPage(0))
 
     def write_pdf(self) :
-        self.writer.write(self.path + self.template_id + time.ctime().replace(' ','_').replace(':','_') + '.pdf',self.template_pdf)
 
+       self.pdf_writer.write(self.outputStream)
+
+       self.inputStream.close()
+       self.outputStream.close()
+       self.annexe_input.close()
+       os.remove(os.path.join(UPLOAD_FOLDER,'annexe_shareolders.pdf'))

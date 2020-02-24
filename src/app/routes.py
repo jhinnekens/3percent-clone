@@ -5,6 +5,8 @@ from werkzeug.utils import secure_filename
 from .pdfWR import PDF
 from .inputFile import InputFile
 from .organigramme import Organigramme
+from .cerfawriter import CerfaWriter
+
 
 import json
 import os
@@ -66,13 +68,9 @@ def upload_file():
 			organigramme = Organigramme()
 			organigramme.build(input_file)
 
-			## 
-			
-			#cerfa = PDF('2746-sd_2589')
-			#cerfa.read_template()
-			#cerfa.fill_at('year',2020)
-			#cerfa.fill_at('siret',int(Entities['Siret Number for French entities'][0]))
-			#cerfa.write_pdf()
+
+			output = CerfaWriter(entitie = 'LAVA SUD 14 Holdco B.V.',orga = organigramme)
+			output.write_cerfa()
 
 			## Remove uploaded file
 			os.remove(os.path.join(UPLOAD_FOLDER, filename))

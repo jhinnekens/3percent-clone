@@ -24,8 +24,9 @@ DIRECT_SHAREOLDER = 'Direct_shareolder'
 ENTITIES_MAP = {
     ENTITIES_NODE_INDEX : 0,
     'Siret' : 2,
-    'Number_shares' : 5,
-    'Adresse' : 3
+    'Adress' : 3,
+    'Country' : 4,
+    'Number_shares' : 5
 }
 
 PROPERTIES_MAP = {
@@ -37,7 +38,7 @@ PROPERTIES_MAP = {
 SHAREOLDERS_MAP = {
     ENTITIES_NODE_INDEX : 0,
     DIRECT_SHAREOLDER : 1,
-    HOLDING_PERCENTAGE : 3
+    HOLDING_PERCENTAGE : 3,
 }
 
 #### CERFA CONFIG :
