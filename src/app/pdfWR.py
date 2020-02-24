@@ -27,7 +27,7 @@ class PDF :
             self.path = path
 
         self.inputStream = open(self.path + self.template_id + '.pdf', "rb")
-        self.outputStream = open(self.path + self.template_id + time.ctime().replace(' ','_').replace(':','_') + '.pdf', "wb")
+        self.outputStream = open(UPLOAD_FOLDER + 'cerfa.pdf', "wb")
 
         self.pdf_reader = PdfFileReader(self.inputStream, strict=False)
         if "/AcroForm" in self.pdf_reader.trailer["/Root"]:

@@ -1,5 +1,5 @@
 from config import *
-from flask import render_template , jsonify, request
+from flask import render_template , jsonify, request , send_from_directory
 from app import app
 from werkzeug.utils import secure_filename
 from .pdfWR import PDF
@@ -34,6 +34,11 @@ def signUpUser():
     user =  request.form['username']
     password = request.form['password']
     return json.dumps({'status':'OK','user':user,'pass':password})
+
+
+@app.route('/download' , methods=['GET', 'POST'])
+def download():
+    return send_from_directory(directory = app.root_path + '/temp' , filename = 'cerfa.pdf')
 
 @app.route('/upload')
 def upload():
@@ -70,6 +75,7 @@ def upload_file():
 
 			output = CerfaWriter(entitie = 'LAVA SUD 14 Holdco B.V.',orga = organigramme)
 			output.write_cerfa()
+
 
 			## Remove uploaded file
 			os.remove(os.path.join(UPLOAD_FOLDER, filename))
