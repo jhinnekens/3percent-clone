@@ -40,7 +40,7 @@ def signUpUser():
 def download():
 	#os.path.join(os.getcwd(), current_app.config["DOWNLOAD_FOLDER"])
 	#app.root_path + '/temp'
-    return send_from_directory(directory = app.root_path + '/temp' , filename = 'cerfa.pdf')
+    return send_from_directory(directory = UPLOAD_FOLDER , filename = 'cerfa.pdf')
 
 @app.route('/upload')
 def upload():

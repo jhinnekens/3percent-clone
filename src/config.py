@@ -1,8 +1,9 @@
 
+from app import app
+
 #### FLASK CONFIG
 
-UPLOAD_FOLDER = 'app/temp/'
-
+UPLOAD_FOLDER = app.root_path + '/temp'
 
 #### INPUT FILE CONFIG
 

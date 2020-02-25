@@ -71,7 +71,7 @@ class CerfaWriter :
                 },
                 ignore_index=True
             )
-        HTML(string=df.to_html()).write_pdf(UPLOAD_FOLDER + 'annexe_shareolders.pdf')
+        HTML(string=df.to_html()).write_pdf(UPLOAD_FOLDER + '/annexe_shareolders.pdf')
         self.pdf.add_page('annexe_shareolders')
 
 
