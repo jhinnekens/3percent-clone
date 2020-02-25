@@ -1,6 +1,6 @@
 
 from config import *
-
+from app import app
 #import pdfrw
 import time
 import os
@@ -22,12 +22,12 @@ class PDF :
 
         self.template_id = '2746-sd_2589'
         if path is None :
-            self.path = 'app/data/cerfa/'
+            self.path = app.root_path + '/data/cerfa/'
         else :
             self.path = path
 
         self.inputStream = open(self.path + self.template_id + '.pdf', "rb")
-        self.outputStream = open(UPLOAD_FOLDER + 'cerfa.pdf', "wb")
+        self.outputStream = open(UPLOAD_FOLDER + '/cerfa.pdf', "wb")
 
         self.pdf_reader = PdfFileReader(self.inputStream, strict=False)
         if "/AcroForm" in self.pdf_reader.trailer["/Root"]:
@@ -67,7 +67,7 @@ class PDF :
         self.pdf_writer.updatePageFormFieldValues(self.pdf_writer.getPage(0), field_dictionary)
 
     def add_page(self,name) :
-        self.annexe_input = open(UPLOAD_FOLDER + str(name) + '.pdf', "rb")
+        self.annexe_input = open(UPLOAD_FOLDER + '/' + str(name) + '.pdf', "rb")
         self.pdf_writer.addPage(PdfFileReader(self.annexe_input, strict = False).getPage(0))
 
     def write_pdf(self) :
