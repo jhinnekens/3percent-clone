@@ -18,32 +18,46 @@ This app works with python 3.6 and virtual env ([see](http://www.dropwizard.io/1
 git clone https://github.com/EtienneSeck/3percent.git
 ```
 
-#### Set up virtual env
+##### Set up virtual env
 
 ```bash
 cd 3percent
 python3 -m venv 3pvenv
 ```
 
-#### Activate virtual env
+##### Activate virtual env
 
-##### For linux
+###### For linux
 
 ```bash
 source 3pvenv/bin/activate
 ```
 
-##### For Windows
+###### For Windows
 
 ```cmd
 3pvenv\Script\activate.bat
 ```
 
-#### Upgrade pip and Install requirements.txt
+##### Upgrade pip and Install requirements.txt
 
 ```cmd
 pip install -U pip
 pip install -r requirements.txt
+```
+
+#### Build With Docker
+
+##### Build Docker Image
+
+```bash
+docker build -t 3papp:latest .
+```
+
+##### Run Service
+
+```bash
+docker run -d -p 5000:5000 3papp:latest
 ```
 
 ## Running Test

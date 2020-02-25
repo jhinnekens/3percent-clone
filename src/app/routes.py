@@ -38,6 +38,8 @@ def signUpUser():
 
 @app.route('/download' , methods=['GET', 'POST'])
 def download():
+	#os.path.join(os.getcwd(), current_app.config["DOWNLOAD_FOLDER"])
+	#app.root_path + '/temp'
     return send_from_directory(directory = app.root_path + '/temp' , filename = 'cerfa.pdf')
 
 @app.route('/upload')
