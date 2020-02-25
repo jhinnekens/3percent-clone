@@ -31,7 +31,8 @@ class CerfaWriter :
         tab_a = self.orga.compute_share(self.entitie)
 
         self.pdf.update(
-            {'PAGE1_ANNEE' : '2020',
+            {'PAGE1_ANNEE' : '2019',
+             'PAGE1_DENOMINATION_ENTITEE' : self.entitie + '\n' + self.get_node_attr('Adress'),
              'PAGE1_SIRET' : round(self.get_node_attr('Siret')),
              'PAGE1_VALEUR_VENALE_A_REPORTER' : tab_a,
              'PAGE1_IDENTITE_REPRESENTANT' : "PwC Société d'Avocats (à l'attention de PRENOM NOM)",
