@@ -5,8 +5,6 @@ from app import app
 
 UPLOAD_FOLDER = app.root_path + '/static/temp'
 
-print('hello julien')
-
 #### INPUT FILE CONFIG
 
 # MAPING SHEET NAME
