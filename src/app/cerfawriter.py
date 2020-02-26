@@ -25,21 +25,22 @@ class CerfaWriter :
         self.fill_annexe()
         self.pdf.write_pdf()
 
-
     def fill_form(self) :
 
         tab_a = self.orga.compute_share(self.entitie)
-
-        self.pdf.update(
-            {'PAGE1_ANNEE' : '2019',
-             'PAGE1_DENOMINATION_ENTITEE' : self.entitie + '\n' + self.get_node_attr('Adress'),
-             'PAGE1_SIRET' : round(self.get_node_attr('Siret')),
-             'PAGE1_VALEUR_VENALE_A_REPORTER' : tab_a,
-             'PAGE1_IDENTITE_REPRESENTANT' : "PwC Société d'Avocats (à l'attention de PRENOM NOM)",
-             'PAGE1_ADRESSE_LIGNE1' : "Crystal Park 61 Rue de Villiers 92208 Neuilly-sur-Seine Cedex France"
-            })
-
         
+        updated_fields =    {
+            'PAGE1_ANNEE' : '2020',
+            'PAGE1_DENOMINATION_ENTITEE' : self.entitie + '\n' + self.get_node_attr('Adress'),
+            'PAGE1_SIRET' : round(self.get_node_attr('Siret')),
+            'PAGE1_VALEUR_VENALE_A_REPORTER' : tab_a,
+            'PAGE1_IDENTITE_REPRESENTANT' : "PwC Société d'Avocats (à l'attention de PRENOM NOM)",
+            'PAGE1_ADRESSE_LIGNE1' : "Crystal Park 61 Rue de Villiers 92208 Neuilly-sur-Seine Cedex France",
+            '' : ''
+            }
+
+        print(updated_fields)
+        self.pdf.update(updated_fields)
 
         tab_b = round(self.get_node_attr('Number_shares'))
         tab_c = tab_b + 0
@@ -56,8 +57,7 @@ class CerfaWriter :
 
         self.fill_annexe_shareolders()
 
-
-    def fill_annexe_shareolders(self) :
+    def fill_annexe_shareolders(self):
 
         df = pd.DataFrame(columns=['Raison sociale', 'Adresse','Pays','% de détention'])
 
@@ -72,6 +72,7 @@ class CerfaWriter :
                 },
                 ignore_index=True
             )
+
         HTML(string=df.to_html()).write_pdf(UPLOAD_FOLDER + '/annexe_shareolders.pdf')
         self.pdf.add_page('annexe_shareolders')
 

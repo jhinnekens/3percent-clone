@@ -9,6 +9,7 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install -U pip
 
 COPY ./requirements.txt /usr/src/3papp/requirements.txt
+RUN apt-get install libpq-dev
 RUN pip install -r requirements.txt
 
 COPY . /usr/src/3papp/

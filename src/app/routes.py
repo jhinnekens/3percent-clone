@@ -7,7 +7,7 @@ from .inputFile import InputFile
 from .organigramme import Organigramme
 from .cerfawriter import CerfaWriter
 
-
+from datetime import datetime
 import json
 import os
 import sys
@@ -15,7 +15,6 @@ import pandas as pd
 
 #app.config['UPLOAD_FOLDER'] = 'app/temp/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','xlsx'])
-
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -25,22 +24,13 @@ def allowed_file(filename):
 def home():
     return render_template('home.html', title='Home')
 
-@app.route('/signUp')
-def signUp():
-    return render_template('form.html')
-
-@app.route('/signUpUser', methods=['POST'])
-def signUpUser():
-    user =  request.form['username']
-    password = request.form['password']
-    return json.dumps({'status':'OK','user':user,'pass':password})
-
+@app.route('/ping')
+def ping():
+    return {'status' : 'OK' , 'time' : datetime.now() }
 
 @app.route('/download' , methods=['GET', 'POST'])
 def download():
-	#os.path.join(os.getcwd(), current_app.config["DOWNLOAD_FOLDER"])
-	#app.root_path + '/temp'
-    return send_from_directory(directory = UPLOAD_FOLDER , filename = 'cerfa.pdf')
+    return send_from_directory(directory = UPLOAD_FOLDER , filename = 'cerfa.pdf' , cache_timeout = 2)
 
 @app.route('/upload')
 def upload():
@@ -63,6 +53,8 @@ def upload_file():
 		if file and allowed_file(file.filename):
     		## Upload file :
 			filename = secure_filename(file.filename)
+			if os.path.exists(os.path.join(UPLOAD_FOLDER, 'cerfa.pdf')) : 
+				os.remove(os.path.join(UPLOAD_FOLDER, 'cerfa.pdf'))
 			file.save(os.path.join(UPLOAD_FOLDER, filename))
 
 			## Read file
@@ -77,7 +69,6 @@ def upload_file():
 
 			output = CerfaWriter(entitie = 'LAVA SUD 14 Holdco B.V.',orga = organigramme)
 			output.write_cerfa()
-
 
 			## Remove uploaded file
 			os.remove(os.path.join(UPLOAD_FOLDER, filename))
