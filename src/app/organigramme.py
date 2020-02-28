@@ -27,13 +27,13 @@ class Organigramme :
         self.properties_nodes = []
         for index,row in inputFile.properties.iterrows():
             node_attr = {key:value for key,value in zip(PROPERTIES_MAP.keys(),row[list(PROPERTIES_MAP.keys())]) if key != PROPERTIES_NODE_INDEX}
-            edge_attr = {HOLDING_PERCENTAGE : 1.0}
+            edge_attr = {HOLDING_PERCENTAGE : 1.0 , NUMBER_SHARES : self.G.nodes[row[ENTITIES_NODE_INDEX]][NUMBER_SHARES] }
             self.G.add_node(row[PROPERTIES_NODE_INDEX],**node_attr)
             self.G.add_edge(row[PROPERTIES_NODE_INDEX],row[ENTITIES_NODE_INDEX],**edge_attr)
             self.properties_nodes.append(row[PROPERTIES_NODE_INDEX])
 
         for index,row in inputFile.shareolders.iterrows():
-            edge_attr = {HOLDING_PERCENTAGE : row[HOLDING_PERCENTAGE]}
+            edge_attr = {HOLDING_PERCENTAGE : row[HOLDING_PERCENTAGE], NUMBER_SHARES : row[NUMBER_SHARES]}
             self.G.add_edge(row[ENTITIES_NODE_INDEX],row[DIRECT_SHAREOLDER],**edge_attr)
     
     def get_entities(self) :
@@ -42,7 +42,7 @@ class Organigramme :
         Returns:
             list -- Return a list of entities
         """
-        return self.shareolder_nodes
+        return self.entities_nodes
 
     def get_properties(self) :
         """Getter for properties nodes
@@ -58,27 +58,72 @@ class Organigramme :
     def entitie_attr(self,entitie,attr) :
         return self.entitie(entitie)[attr]
 
-    def compute_share(self,entitie) :
-        """Compute the total holding that the entitie shares
+    def get_paths(self,entitie,propertie) :
+        paths = []
+        for path in map(nx.utils.pairwise, nx.all_simple_paths(self.G,propertie,entitie)):
+            paths.append([e for e in path])
+        return paths
+
+    def get_all_paths(self,entitie) :
+        """ Return all edges between properties and the given entitie
         
         Arguments:
-            entitie {str} -- entitie name
+            entitie {[type]} -- [description]
         
         Returns:
-            float -- Total holding shared by the entitie
+            [type] -- [description]
         """
-
-        total = 0.
-
+        paths = []
         for propertie in self.properties_nodes :
-            for path in map(nx.utils.pairwise, nx.all_simple_paths(self.G,propertie,entitie)):
-                edges = [(e1,e2) for e1,e2 in path]
-                path_amount = 1.0
-                for edge in edges :
-                    path_amount = path_amount*self.G.edges[edge][HOLDING_PERCENTAGE]   
-                total = path_amount*self.G.nodes[propertie][PROPERTIE_VALUE] + total
+            for path in self.get_paths(entitie,propertie) :
+                paths.append(path)
+        return paths
 
+    def get_all_parents(self,entitie) :
+        """ Return all entities between the given entitie and properties
+        
+        Arguments:
+            entitie {[type]} -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+        paths = self.get_all_paths(entitie)
+        parents = []
+        for path in paths :
+            for e1,e2 in path :
+                if e1 != entitie and e1 not in self.properties_nodes:
+                    parents.append(e1)
+                if e2 != entitie and e2 not in self.properties_nodes:
+                    parents.append(e2)
+        parents = list(set(parents))
+        return parents
+
+    def properties_shared(self,entitie) : 
+        shared_properties = []
+        for propertie in self.get_properties():
+            if nx.has_path(self.G,propertie,entitie):
+                shared_properties.append(propertie)
+        return shared_properties
+
+    def compute_share_prop(self,entitie,propertie) :
+        paths = self.get_paths(entitie,propertie)
+        total = 0.0
+        for path in paths :
+            edges = [(e1,e2) for e1,e2 in path]
+            path_amount = 1.0
+            for edge in edges :
+
+                path_amount = path_amount*self.G.edges[edge][HOLDING_PERCENTAGE]
+            total = path_amount*self.G.nodes[propertie][PROPERTIE_VALUE] + total
         return round(total)
+
+    def compute_share(self,entitie) :
+        total = 0
+        for propertie in self.properties_nodes :
+            total = total + self.compute_share_prop(entitie,propertie)
+
+        return total
 
     def children(self,entitie) :
         """ Return entities which shared the given entitie
@@ -110,18 +155,21 @@ class Organigramme :
         """
         return str(nx.info(self.G))
 
+    def jsonify(self):
+        return nx.node_link_data(self.G)
+
     def draw(self) :
         return
         pos = graphviz_layout(G, prog='dot')
 
-        nx.draw_networkx_nodes(G,pos,nodelist = properties_nodes , node_color = 'red', node_shape = '^' , node_size = 1000 )
-        nx.draw_networkx_nodes(G,pos,nodelist = shareolder_nodes , node_color = 'yellow', node_shape = 's' , node_size = 1000)
-        nx.draw_networkx_labels(G,pos,labels = {key:value for key,value in zip(properties_nodes,properties_nodes)})
-        nx.draw_networkx_labels(G,pos,labels = {key:value for key,value in zip(shareolder_nodes,shareolder_nodes)}, font_size = 8)
-        nx.draw_networkx_edge_labels(G,pos,edge_labels= nx.get_edge_attributes(G,'display_shares'))
+        nx.draw_networkx_nodes(G,pos,nodelist = self.properties_nodes , node_color = 'red', node_shape = '^' , node_size = 1000 )
+        nx.draw_networkx_nodes(G,pos,nodelist = self.entities_nodes , node_color = 'yellow', node_shape = 's' , node_size = 1000)
+        nx.draw_networkx_labels(G,pos,labels = {key:value for key,value in zip(self.properties_nodes,self.properties_nodes)})
+        nx.draw_networkx_labels(G,pos,labels = {key:value for key,value in zip(self.entities_nodes,self.entities_nodes)}, font_size = 8)
+        nx.draw_networkx_edge_labels(G,pos)
         nx.draw_networkx_edges(G,pos)
 
-        plt.savefig("Graph.png", format="PNG")
+        plt.savefig("/home/etienne/Documents/Graph.png", format="PNG")
 
 
             

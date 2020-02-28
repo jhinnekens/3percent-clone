@@ -4,6 +4,7 @@ from app import app
 #import pdfrw
 import time
 import os
+import io
 
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from PyPDF2.generic import BooleanObject, NameObject, IndirectObject
@@ -65,16 +66,12 @@ class PDF :
         self.pdf_writer.addPage(self.pdf_reader.getPage(0))
         self.pdf_writer.addPage(self.pdf_reader.getPage(1))
         self.pdf_writer.updatePageFormFieldValues(self.pdf_writer.getPage(0), field_dictionary)
+        self.pdf_writer.updatePageFormFieldValues(self.pdf_writer.getPage(1), field_dictionary)
 
-    def add_page(self,name) :
-        self.annexe_input = open(UPLOAD_FOLDER + '/' + str(name) + '.pdf', "rb")
-        self.pdf_writer.addPage(PdfFileReader(self.annexe_input, strict = False).getPage(0))
-
-    def write_pdf(self) :
-
-       self.pdf_writer.write(self.outputStream)
-
-       self.inputStream.close()
-       self.outputStream.close()
-       self.annexe_input.close()
-       os.remove(os.path.join(UPLOAD_FOLDER,'annexe_shareolders.pdf'))
+    def add_page(self,page) :
+        #self.annexe_input = open(UPLOAD_FOLDER + '/' + str(name) + '.pdf', "rb")
+        tmp = io.BytesIO()
+        page.write_pdf(tmp)
+   
+        #self.pdf_writer.addPage(PdfFileReader(self.annexe_input, strict = False).getPage(0))
+        self.pdf_writer.addPage(PdfFileReader(tmp, strict = False).getPage(0))

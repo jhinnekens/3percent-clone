@@ -1,6 +1,7 @@
 from flask import Flask
 import os
+from flask_cors import CORS
 app = Flask(__name__)
-print(app.root_path)
+CORS(app)
 
 from app import routes

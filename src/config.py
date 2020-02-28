@@ -21,17 +21,22 @@ PROPERTIES_NODE_INDEX = 'Propertie_name'
 PROPERTIE_VALUE = 'Value'
 HOLDING_PERCENTAGE = 'Holding_percentage'
 DIRECT_SHAREOLDER = 'Direct_shareolder'
+NUMBER_SHARES = 'Number_shares'
 
 ENTITIES_MAP = {
     ENTITIES_NODE_INDEX : 0,
     'Siret' : 2,
     'Adress' : 3,
     'Country' : 4,
-    'Number_shares' : 5
+    NUMBER_SHARES : 5
 }
 
 PROPERTIES_MAP = {
+    'Adress' : 0,
+    'Post_Code' : 1,
     PROPERTIES_NODE_INDEX : 2,
+    'Nature' : 3,
+    'Surface' : 4,
     PROPERTIE_VALUE : 5,
     ENTITIES_NODE_INDEX : 6
 }
@@ -40,6 +45,7 @@ SHAREOLDERS_MAP = {
     ENTITIES_NODE_INDEX : 0,
     DIRECT_SHAREOLDER : 1,
     HOLDING_PERCENTAGE : 3,
+    NUMBER_SHARES : 4
 }
 
 #### CERFA CONFIG :

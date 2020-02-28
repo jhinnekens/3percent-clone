@@ -46,8 +46,8 @@ class InputFile :
             if 'float' in str(df[col].dtype) :
                 df[col] = self.clean_floatcol(df[col])
 
-    def clean_strcol(self,col) : 
-        return(col.apply(lambda x : x.strip()))
+    def clean_strcol(self,col) :
+        return(col.apply(lambda x : x.strip() if type(x) == 'str' else x))
 
     def clean_floatcol(self,col) : 
         return(col.apply(lambda x : 0 if math.isnan(x) else x))
