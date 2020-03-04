@@ -9,7 +9,12 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install -U pip
 
 COPY ./requirements.txt /usr/src/3papp/requirements.txt
-RUN apt-get install libpq-dev
+RUN apt-get -y update
+RUN apt-get install -y libpq-dev
+RUN apt-get install -y graphviz
+RUN apt-get install -y graphviz-dev
+
+
 RUN pip install -r requirements.txt
 
 COPY . /usr/src/3papp/

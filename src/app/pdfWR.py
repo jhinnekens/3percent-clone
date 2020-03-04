@@ -71,7 +71,7 @@ class PDF :
     def add_page(self,page) :
         #self.annexe_input = open(UPLOAD_FOLDER + '/' + str(name) + '.pdf', "rb")
         tmp = io.BytesIO()
-        page.write_pdf(tmp)
+        page.write_pdf(tmp , stylesheets = ["app/templates/df_style.css"])
    
         #self.pdf_writer.addPage(PdfFileReader(self.annexe_input, strict = False).getPage(0))
         self.pdf_writer.addPage(PdfFileReader(tmp, strict = False).getPage(0))

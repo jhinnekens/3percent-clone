@@ -3,8 +3,6 @@ version: '3.7'
 services:
   web:
     build: .
-    command: python /usr/src/3papp/src/run.py run
-    volumes:
-      - .:/usr/src/3papp/
+    command: python /usr/src/3papp/src/run.py
     ports:
       - 5000:5000

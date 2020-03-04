@@ -17,14 +17,7 @@ orga = Organigramme()
 orga.build(inputF)
 
 
-paths = []
-for propertie in orga.properties_nodes :
-    for path in map(nx.utils.pairwise, nx.all_simple_paths(orga.G,propertie,entitie)):
-        print(path)
-        paths.append([e for e in path])
-
-
-print(orga.get_all_parents(entitie))
+orga.draw()
 
 #print([e for e in paths[0]])
 #print([e for e in paths[1]])

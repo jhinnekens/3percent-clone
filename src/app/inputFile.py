@@ -22,8 +22,9 @@ class InputFile :
         Returns:
             [type] -- [description]
         """
-        return pd.read_excel(self.path,sheet_name = sheet_name , usecols = usecols, names = names)
-
+ 
+        return pd.read_excel(self.path,sheet_name = sheet_name , usecols = usecols , names = names)
+  
     def read_entities(self) :
         return self.read_sheet(SHEET_MAP['Entities'], usecols = list(ENTITIES_MAP.values()), names = list(ENTITIES_MAP.keys()))
 
@@ -68,10 +69,22 @@ class InputFile :
     def check_all(self) :
         check1 = self.check_properties()
         check2 = self.check_shareolders()
-        if len(check1) or len(check2) : 
-            raise Exception()
 
-    def process(self) : 
+        if len(check1) :
+            p = len(check1) > 1
+            value = 'Entitie{} {} {} declared in "{}" sheet but {} not in "{}" sheet'
+            value = value.format('s' if p else '',', '.join(check1),'are' if p else 'is',
+             SHEET_MAP['Properties'],'are' if p else 'is',SHEET_MAP['Entities'])
+            raise Exception(value)
+
+        if len(check2) :
+            p = len(check2) > 1
+            value = 'Entitie{} {} {} declared in "{}" sheet but {} not in "{}" sheet'
+            value = value.format('s' if p else '',', '.join(check2),'are' if p else 'is',
+             SHEET_MAP['Shareolders'],'are' if p else 'is',SHEET_MAP['Entities'])
+            raise Exception(value)
+
+    def process(self) :
         self.read_all()
         self.clean_all()
         self.check_all()

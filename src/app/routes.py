@@ -20,108 +20,25 @@ import base64
 import json
 
 
-#app.config['UPLOAD_FOLDER'] = 'app/temp/'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','xlsx'])
 
-db = pgDB()
+try :
+	db = pgDB()
+except Exception as e:
+	app.logger.info(str(sys.exc_info()[1]))
 
-def allowed_file(filename):
-	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/')
-@app.route('/home')
-def home():
-    return render_template('home.html', title='Home')
 
 @app.route('/ping')
 def ping():
     return {'status' : 'OK' , 'time' : datetime.now()}
 
-@app.route('/julien')
-def julien():
-    return jsonify([{"id": 1, "firstname": "EtienneS", "name": "Secking"},{"id": 2,"firstname": "Jane","name": "Doe"}])
-
-@app.route('/download' , methods=['GET', 'POST'])
-def download():
-    return send_from_directory(directory = UPLOAD_FOLDER , filename = 'cerfa.pdf' , cache_timeout = 2)
-
-@app.route('/upload')
-def upload():
-    return render_template('upload.html')
-
-@app.route('/python-flask-files-upload', methods=['POST'])
-def upload_file():
-	# check if the post request has the file part
-	if 'files[]' not in request.files:
-		resp = jsonify({'message' : 'No file part in the request'})
-		resp.status_code = 400
-		return resp
-	
-	files = request.files.getlist('files[]')
-	
-	errors = {}
-	success = False
-
-	for file in files:
-		if file and allowed_file(file.filename):
-			
-    		## Upload file :
-			filename = secure_filename(file.filename)
-			if os.path.exists(os.path.join(UPLOAD_FOLDER, 'cerfa.pdf')) :
-				os.remove(os.path.join(UPLOAD_FOLDER, 'cerfa.pdf'))
-			file.save(os.path.join(UPLOAD_FOLDER, filename))
-
-			## Store in database
-	
-			with open(os.path.join(UPLOAD_FOLDER, filename), "rb") as f:
-				db.insert('Fichier_collecte',Active = True, Date_creation = 'NOW()' , ID_Client = 122,
-				 ID_Partner = 3, ID_Creator = 1, Fichier_Excel = ps2.Binary(f.read()))
-
-
-			ID_Collecte = db.get_max_id('Fichier_collecte','ID')
-			## Read file
-			input_file = InputFile(os.path.join(UPLOAD_FOLDER, filename))
-
-			## Check error
-			input_file.process()
-
-			## Build Organigramme
-			organigramme = Organigramme()
-			organigramme.build(input_file)
-
-			#a = organigramme.jsonify()
-
-
-			## Construct and Store Cerfas
-
-			for entitie in organigramme.get_entities() :
-				cerfa = CerfaWriter(entitie,orga = organigramme)
-				writer = cerfa.fill_pdf()
-				tmp = io.BytesIO()
-				writer.write(tmp)
-				db.insert('Cerfa',ID_Collecte = ID_Collecte , Pdf = ps2.Binary(tmp.getvalue()))
-
-			## Remove uploaded file
-			os.remove(os.path.join(UPLOAD_FOLDER, filename))
-			success = True
-		else:
-			errors[file.filename] = 'File type is not allowed'
-	
-	if success and errors:
-		errors['message'] = 'File(s) successfully uploaded'
-		resp = jsonify(errors)
-		resp.status_code = 206
-		return resp
-		
-	if success:
-		resp = jsonify({'message' : 'Files successfully uploaded'})
-		resp.status_code = 201
-		return resp
-	else:
-		resp = jsonify(errors)
-		resp.status_code = 400
-		return resp
-
+@app.route('/connectDB')
+def connectDB():
+	try :
+		db = pgDB()
+	except Exception as e:
+		error = errorHandler("Error in connecting database",str(sys.exc_info()[1]))
+		return error,401
+	return 200
 
 @app.route('/declarations')
 def declarations():
@@ -130,7 +47,6 @@ def declarations():
 
 	for f in fichiers_collecte :
 		declarations = db.select_where('Cerfa',{'ID_Collecte' : f['ID']})
-		#declarations = [{key:value for key,value in [('Cerfa' + str(e['ID_Cerfa']),request.host_url + 'download_cerfa/' + str(e['ID_Cerfa'])) for e in declarations]}]
 		declarations = [(link,id) for link,id in [(request.host_url + 'download_cerfa/' + str(e['ID_Cerfa']),e['Nom_Entite']) for e in declarations]]
 		dec = []
 		for e1,e2 in declarations :
@@ -174,11 +90,15 @@ def download_collecte(ID):
 	  mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 	  cache_timeout = 2)
 
-@app.route('/upload2' , methods=['POST'])
-def upload2():
+@app.route('/upload' , methods=['POST'])
+def upload():
 	### READ UPLOAD REQUEST
+	error = {}
+
 	files = request.form
 	excel = files['file'].split(',')[1]
+
+
 	excel = base64.b64decode(excel)
 	partner = files['email']
 	partner = next(db.select_where('Partner',{'email':"'" + partner + "'" }))
@@ -186,8 +106,13 @@ def upload2():
 
 
 	### PROCESS INPUT FILE
-	input_file = InputFile(excel)
-	input_file.process()
+	try :
+		input_file = InputFile(excel)
+		input_file.process()
+	except Exception as e:
+		error = errorHandler('Error in reading Input File',str(sys.exc_info()[1]))
+		return error , 401
+	
 
 	### Build Organigramme
 	organigramme = Organigramme()
@@ -214,3 +139,8 @@ def upload2():
 def draw_orga(ID):
 	orga = next(db.select_where('Fichier_collecte',{'ID_Creator' : 1},'Organigramme'))['Organigramme']
 	return jsonify(orga)
+
+def errorHandler(message,value):
+	error = {'message': message  , 'value': value }
+	app.logger.info(error)
+	return error

@@ -1,5 +1,6 @@
 import networkx as nx
 from config import *
+import matplotlib.pyplot as plt
 
 
 class Organigramme :
@@ -22,6 +23,7 @@ class Organigramme :
         for index,row in inputFile.entities.iterrows():
             node_attr = {key:value for key,value in zip(ENTITIES_MAP.keys(),row[list(ENTITIES_MAP.keys())]) if key != ENTITIES_NODE_INDEX}
             self.G.add_node(row[ENTITIES_NODE_INDEX],**node_attr)
+            self.G.nodes[row[ENTITIES_NODE_INDEX]]['shape'] = 'rect'
             self.entities_nodes.append(row[ENTITIES_NODE_INDEX])
 
         self.properties_nodes = []
@@ -29,12 +31,56 @@ class Organigramme :
             node_attr = {key:value for key,value in zip(PROPERTIES_MAP.keys(),row[list(PROPERTIES_MAP.keys())]) if key != PROPERTIES_NODE_INDEX}
             edge_attr = {HOLDING_PERCENTAGE : 1.0 , NUMBER_SHARES : self.G.nodes[row[ENTITIES_NODE_INDEX]][NUMBER_SHARES] }
             self.G.add_node(row[PROPERTIES_NODE_INDEX],**node_attr)
+            self.G.nodes[row[PROPERTIES_NODE_INDEX]]['shape'] = 'triangle'
             self.G.add_edge(row[PROPERTIES_NODE_INDEX],row[ENTITIES_NODE_INDEX],**edge_attr)
             self.properties_nodes.append(row[PROPERTIES_NODE_INDEX])
 
         for index,row in inputFile.shareolders.iterrows():
             edge_attr = {HOLDING_PERCENTAGE : row[HOLDING_PERCENTAGE], NUMBER_SHARES : row[NUMBER_SHARES]}
             self.G.add_edge(row[ENTITIES_NODE_INDEX],row[DIRECT_SHAREOLDER],**edge_attr)
+
+        pos = nx.nx_agraph.graphviz_layout(self.G, prog='dot')
+
+        y = list()
+        x = list()
+        for node_pos in pos.values() :
+            y.append(node_pos[1])
+            x.append(node_pos[0])
+
+        x = list(set(x))
+        x.sort()
+
+        if max(x) != min(x) :
+            x_norm = [(e-min(x))/(max(x)-min(x)) for e in x]
+        else : 
+            x_norm = [0.5 for i in range(le(x))]
+        
+        x = {key:value for key,value in zip(x,x_norm)}
+
+        y = list(set(y))
+        y.sort()
+        y = {key:value for key,value in zip(y,range(len(y)))}
+
+        
+        for node in self.G.nodes :
+            self.G.nodes[node]['coord'] = {'x' : x[pos[node][0]] , 'y' : pos[node][1]}
+            self.G.nodes[node]['layer'] = y[pos[node][1]]
+            self.G.nodes[node]['total_layer'] = len(y)
+
+
+    def compute_layer(self) : 
+
+        for propertie in self.properties_nodes :
+            lvl = 1
+            bfs = nx.bfs_successors(self.G,propertie)
+            for neighbors in bfs : 
+                nodes = neighbors[1]
+                for node in nodes :
+                    self.G.nodes[node]['layer'].append(lvl)
+                lvl+=1
+
+        for node in self.entities_nodes :
+            self.G.nodes[node]['layer'] = max(self.G.nodes[node]['layer'])
     
     def get_entities(self) :
         """ Getter for entities nodes
@@ -159,20 +205,16 @@ class Organigramme :
         return nx.node_link_data(self.G)
 
     def draw(self) :
-        return
-        pos = graphviz_layout(G, prog='dot')
+        pos = nx.nx_agraph.graphviz_layout(self.G, prog='dot', args='-Gordering=out -Nwidth=".2" -Nheight=".2" -Nmargin=0 -Gfontsize=8')
 
-        nx.draw_networkx_nodes(G,pos,nodelist = self.properties_nodes , node_color = 'red', node_shape = '^' , node_size = 1000 )
-        nx.draw_networkx_nodes(G,pos,nodelist = self.entities_nodes , node_color = 'yellow', node_shape = 's' , node_size = 1000)
-        nx.draw_networkx_labels(G,pos,labels = {key:value for key,value in zip(self.properties_nodes,self.properties_nodes)})
-        nx.draw_networkx_labels(G,pos,labels = {key:value for key,value in zip(self.entities_nodes,self.entities_nodes)}, font_size = 8)
-        nx.draw_networkx_edge_labels(G,pos)
-        nx.draw_networkx_edges(G,pos)
+        nx.draw_networkx_nodes(self.G,pos,nodelist = self.properties_nodes , node_color = 'red', node_shape = '^' , node_size = 500 )
+        nx.draw_networkx_nodes(self.G,pos,nodelist = self.entities_nodes , node_color = 'yellow', node_shape = 's' , node_size = 500)
+        nx.draw_networkx_labels(self.G,pos,labels = {key:value for key,value in zip(self.properties_nodes,self.properties_nodes)})
+        nx.draw_networkx_labels(self.G,pos,labels = {key:value for key,value in zip(self.entities_nodes,self.entities_nodes)}, font_size = 4)
+        #nx.draw_networkx_edge_labels(self.G,pos)
+        nx.draw_networkx_edges(self.G,pos,connectionstyle=None)
 
         plt.savefig("/home/etienne/Documents/Graph.png", format="PNG")
-
-
-            
 
 
 

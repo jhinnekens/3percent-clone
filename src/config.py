@@ -3,6 +3,8 @@ from app import app
 
 #### FLASK CONFIG
 
+
+ROOT = app.root_path
 UPLOAD_FOLDER = app.root_path + '/static/temp'
 
 #### INPUT FILE CONFIG

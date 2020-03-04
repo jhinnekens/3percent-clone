@@ -3,6 +3,12 @@ from config import *
 from .pdfWR import PDF
 import pandas as pd
 from weasyprint import HTML
+from jinja2 import Environment, FileSystemLoader
+
+env = Environment(loader=FileSystemLoader('.'))
+template = env.get_template(ROOT + "/templates/table_annexe.html")
+
+
 
 class CerfaWriter : 
 
@@ -14,6 +20,7 @@ class CerfaWriter :
         self.prenom = prenom.strip()
         self.email = email.strip()
         self.properties_holding = {}
+        self.date = '01/01/2020'
         total = 0.0
 
         for propertie in self.orga.properties_shared(self.entitie) :
@@ -93,13 +100,22 @@ class CerfaWriter :
         self.fill_annexe_properties()
         self.fill_annexe_shareolders()
 
+
+    def draw_annexe(self,df,numero,title) :
+        df = df.replace({'\n': '<br>'}, regex=True)
+        html = df.to_html(index = False , escape = False)
+        template_vars = {"title" : 'Annexe - {} Déclaration 2746<br/>{} au 1er janvier {}<br/>{}'.format(numero,title,'2020',self.entitie),
+         "annexe_table": html}
+        html_out = template.render(template_vars)
+        self.pdf.add_page(HTML(string=html_out))
+
     def fill_annexe_interpose(self):
         df = pd.DataFrame(columns=['Raison sociale', 'Adresse','Participation'])
 
         for entitie in self.orga.get_all_parents(self.entitie) :
             Participation = []
             for child in self.orga.children(entitie) :
-                Participation.append("Détenue à {}% par {}".format(self.orga.G.get_edge_data(entitie,child)[HOLDING_PERCENTAGE],child))
+                Participation.append("Détenue à {}% par {}".format(self.orga.G.get_edge_data(entitie,child)[HOLDING_PERCENTAGE]*100,child))
             df = df.append(
                 {
                     'Raison sociale' : entitie,
@@ -108,13 +124,14 @@ class CerfaWriter :
                 },
                 ignore_index=True
             )
-        self.pdf.add_page(HTML(string=df.to_html()))
+
+        self.draw_annexe(df,'1','Personnes interposées')
 
     def fill_annexe_properties(self) :
-        DATE = '01/01/2017'
+
         df = pd.DataFrame(columns=['Adresse', 'CP','Commune','Nature','Surface en m2',
-         'Valeur vénale(€) au {}'.format(DATE),'Pourcentage de détention',
-         'Valeur vénale(€) au {} rapportée au pourcentage de détention du déclarant'.format(DATE)])
+         'Valeur vénale(€) au {}'.format(self.date),'Pourcentage de détention',
+         'Valeur vénale(€) au {} rapportée au pourcentage de détention du déclarant'.format(self.date)])
 
         for propertie in self.orga.properties_shared(self.entitie) :
             node = self.orga.G.nodes[propertie]
@@ -125,14 +142,14 @@ class CerfaWriter :
                     'Commune' : propertie,
                     'Nature' : node['Nature'],
                     'Surface en m2' : node['Surface'],
-                    'Valeur vénale(€) au {}'.format(DATE) : node[PROPERTIE_VALUE],
-                    'Pourcentage de détention' : self.properties_holding[propertie][HOLDING_PERCENTAGE],
-                    'Valeur vénale(€) au {} rapportée au pourcentage de détention du déclarant'.format(DATE) : self.properties_holding[propertie]['Holding']
+                    'Valeur vénale(€) au {}'.format(self.date) : node[PROPERTIE_VALUE],
+                    'Pourcentage de détention' : str(self.properties_holding[propertie][HOLDING_PERCENTAGE]*100) + ' %',
+                    'Valeur vénale(€) au {} rapportée au pourcentage de détention du déclarant'.format(self.date) : self.properties_holding[propertie]['Holding']
 
                 },
                 ignore_index=True
             )
-        self.pdf.add_page(HTML(string=df.to_html()))
+        self.draw_annexe(df,'2','Immeubles détenus')
 
     def fill_annexe_shareolders(self):
 
@@ -150,9 +167,6 @@ class CerfaWriter :
                 ignore_index=True
             )
 
-        #HTML(string=df.to_html()).write_pdf(UPLOAD_FOLDER + '/annexe_shareolders.pdf')
-        #self.pdf.add_page('annexe_shareolders')
-
-        self.pdf.add_page(HTML(string=df.to_html()))
+        self.draw_annexe(df,'3','Actionnaires')
 
 
