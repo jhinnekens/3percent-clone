@@ -1,0 +1,31 @@
+<a routerLink="/">< Retour</a>
+<div class="spacer10"></div>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col" class="id_cell">#</th>
+      <th scope="col" class="normal_cell">Groupe client</th>
+      <th scope="col" class="normal_cell">Fichier Collecte</th>
+      <th scope="col" class="normal_cell">Déclarations</th>
+      <th scope="col" class="normal_cell">Organigramme</th>
+      <th scope="col" class="small_cell">Créé par</th>
+      <th scope="col" class="small_cell">Créé le</th>
+      <th scope="col" class="very_small_cell"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let declaration of declarations">
+      <th scope="row" class="id_cell">{{declaration.id}}</th>
+      <td class="normal_cell">{{declaration.groupe}}</td>
+      <td class="normal_cell"><a href="{{declaration.fichier_collecte.link}}">{{declaration.fichier_collecte.filename}}</a></td>
+      <td class="normal_cell"><ul><li *ngFor="let declarationFile of declaration.declarationFiles"><a href="{{declarationFile.link}}">{{declarationFile.filename}}</a></li></ul></td>
+      <td class="normal_cell"><span (click)="showD3(declaration.id)" class="likeA">orga.png</span></td>
+      <td class="small_cell">{{declaration.createdBy}}</td>
+      <td  class="small_cell">{{declaration.created}}</td>
+      <td class="very_small_cell"><img class="deleteCross" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADEAAABACAYAAACz4p94AAADK0lEQVRoQ+3Zz2sTQRQH8Pc2Cir2JCqxP46C4slbrbT5JV706MlDTCiC/4I3j149eanGo+RkIzZF1OA/oIKICJ7sFkGsP4iCmt2Rrd0Qkt158+PNImVz3c3Mft53ZmdnF2EX/HAXGCBH/C8p5knkSTBWIB9OjMW0aipPwqp8jH9WSmLz4tUDgx+/inNP771n7Fva1Obi8oni0W/vsN0OqD5JRAQIv//pIMJJBFE+1mu9pRq1Pe5XGmcGYdgtgPdo+nD/MgWRImIAIFSiC0OAj64hI4CpnWLcpyCpiHFAXF2XkARA3K0UkohIA7iE+OX6wkDAWgG8OIHxUZkKmUBQABcQBYA0kQnEh1K9g+BdUJmcHENLA7B9SSGI23O91rXR65tAbFQaFQjhIQDsdw2JAIGArgfeQZW+whA+ewWszjy780qKiA5mAeEC7Nw1k2vgEsIJkCJcJcINIBHbkHK9CsLrcMwRv9Q8G0CwpjUHPFGb6bVeyuYM+djBBXEFUEoiroBNIroAEOEWIFapBEbWLJWb279z/FKjJgBWdYYWCLgeYHhLdQjpArSSiKm6EPUSAZgAjBAmiShBNIcQudipdMqaiAXAOInh0Fq6ck4gPlCdI4nFEeEWij216ecrL1SKl3SO0i1W1rhvA2EAWCdhlQgTgA2xsdScDzBYl2xoJsLkeIw3WieShpUJYKRzlj271ZywAXBCjBEcAC6IEYITwAHRRrgA2EK0ELqAaE+MKG4g4k3VBdHkrqWMMAHEm3rdBVEXooSwAZguiDoQEsEBMH2MV4VIEZwAl5BUhAuAK0giwiXABWTyNabmw1zaq0WVvYHNywfpzs5fbHSFB+dVLsIGELevCxEgVmZ7rWUp4tNCc+rnXrFeAJiXQTgA2hABq1+P9C+dard/k3tsCsIJUIakAKSbojSIC8AQkvZZQQIgd3bjEJeAVAgBIBHRCTEEQzie9IFD5Qage87ws4KAx0lzYLw98rEjhgz2idnik7tvdC/I9Hy/0jj95VD/9fgkTmpPCWF6IVn9L0dkVWmqnzwJqkJZHc+TyKrSVD95ElSFsjqeJ5FVpal+/gL32YdfMz5xTgAAAABJRU5ErkJggg=="></td>    
+    </tr>
+
+  </tbody>
+</table>
+
+<app-d3-graph *ngIf="d3Visible" (onClose)="hideD3()" [IDgraph]="IDgraph"></app-d3-graph>

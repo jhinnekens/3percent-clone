@@ -1,0 +1,42 @@
+<app-waiting [message]="waitingMessage" *ngIf="waitingActive" (onClose)="hideWaiting()"></app-waiting>
+<app-toast [message]="toastMessage" [type]="toastType" [@FadeOut]="'out'" *ngIf="toastActive" (onClose)="hideToast()"></app-toast>
+
+<div class="fullSizeContainer">
+  <header class="container-fluid">
+         <div class="row justify-content-between header-pwc">
+            <div class="col-8 logo-top logo-appli"><img id="iconLeft" src="../assets/images/icon left.png">  <span class="initiale">A</span>pplication <span class="initiale">T</span>axe <span class="initiale">3%</span></div>
+            <div class="col-2 logo-top"><img id="logo-pwc" src="../assets/images/logo.jpg"></div>
+         </div>
+      </header>
+      <section class="container">
+         <div class="row">
+            <div class="col align-self-center content-wrapper-pwc">
+               <div class="row content-box-header">
+                  <div class="col-2 logo-wrapper">
+                     <img id="iconLeftIn" src="../assets/images/icon left grey.png"> 
+                  </div>
+                  <div class="col-10 box-title">
+                     <div class="row" style="height:100%">
+                        <div class="col box-title-top">
+                           Application Taxe 3%
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col box-title-sub">
+                           <span>{{ pageTitle }}</span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+         
+              <div class="content-box-body">
+                  <router-outlet></router-outlet>
+            </div>
+         
+            </div>
+         </div>
+
+      </section>
+      <footer class="container-fluid fixed-bottom">
+         © PwC
+      </footer>
+</div>

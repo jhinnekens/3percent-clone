@@ -1,0 +1,70 @@
+.toastClass
+{
+	
+    height: 80px;
+    width: 300px;
+    position: absolute;
+    border-radius: 20px;
+    z-index: 999;
+    top: 5px;
+    left: calc(50% - 150px);
+    padding: 10px;
+
+}
+
+.toastClassError
+{
+	background-color: rgba(255,0,0,.7);
+}
+
+
+.toastClassSuccess
+{
+	background-color: rgba(75,181,67,1);
+}
+
+
+.toastInner
+{
+	display: inline-block;
+    width: 200px;
+    height: 70px;
+    vertical-align: top;
+    margin-bottom: 5px;
+    margin-top: -5px;
+    padding: 5px;
+    color: white;
+    font-size: 12px;
+}
+
+.icone
+{
+	height: 100%;
+    width: 70px;
+    display: inline-block;
+}
+
+.iconeInner
+{
+	width: 40px;
+    height: 40px;
+    background-color: white;
+    margin: auto;
+    margin-top: 10px;
+    border-radius: 20px;
+}
+
+.greenCheckImg
+{
+	height: 30px;
+    margin: auto;
+    margin-left: 5px;
+    margin-top: 5px;
+
+}
+
+.redCrossImg
+{
+    height: 40px;
+    margin-left: 5px;
+}

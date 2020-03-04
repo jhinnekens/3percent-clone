@@ -1,0 +1,79 @@
+	tbody {
+		height: 310px;
+		overflow-y: scroll;
+		overflow-x: hidden;
+	}
+
+	tbody, thead
+{
+	display: block;
+	
+}
+
+
+th
+{
+	font-size: 13px;
+}
+
+td
+{
+	font-size: 13px;
+	  word-wrap: break-word;
+}
+
+.normal_cell
+{
+		width:170px;
+	max-width:170px;
+}
+
+.id_cell
+{
+	width:40px;
+}
+
+.small_cell
+{
+	width:100px;
+	
+}
+
+.very_small_cell
+{
+	width:30px;
+}
+
+.spacer10
+{
+	height:10px
+}
+
+.deleteCross
+{
+	height: 25px;
+    cursor: pointer;
+
+    &:hover
+    {
+    opacity:.8;
+    }
+}
+
+li, ul
+{
+	padding: 0;
+    margin: 0;
+}
+
+.likeA
+{
+color: #007bff;
+cursor: pointer;
+
+	&:hover
+	{
+		text-decoration: underline;
+	}
+}
+ 

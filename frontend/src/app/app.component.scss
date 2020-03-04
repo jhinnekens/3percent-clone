@@ -1,0 +1,194 @@
+html {
+  height: 100%;
+}
+.fullSizeContainer {
+  min-height: 100%;
+  font-family: 'Georgia', "Roboto", sans-serif;
+  font-size: 14px !important;
+  //background: url("../assets/images/objet-dynamique-vectoriel2.png") repeat-x;
+  background-position: bottom center;
+}
+
+footer
+{
+    color: #aba5a5;
+	padding-bottom:2px;
+}
+
+h2
+{
+font-size: 1.5em;
+}
+         
+ @media (min-width: 1200px)
+         {
+         section
+         {
+         max-width: 1000px!important;
+         }
+         }
+		 
+		 
+		table, tr, th, td, tbody
+		{
+		border-color: #AAA !important;
+		}
+
+
+
+.initiale
+{
+font-size: 26px!important;
+color:#d04a02;
+padding-left:0px!important;
+}
+
+.logo-appli span
+{
+font-size: 20px;
+font-weight: 500;
+padding-left:5px;
+}
+
+.logo-wrapper
+{
+padding-top:20px;
+}
+
+.header-pwc
+{
+height:139px;
+}
+
+.content-box-header
+{
+height:84px;
+    background: #efefef;
+}
+
+.box-title-sub
+{
+background-color: #d04a02;
+    font-size: 14px;
+    font-weight: 900;
+    color: #ffffff;
+    text-transform: uppercase;
+    padding-top: 7px;
+    height: 36px;
+    margin-bottom: 0px;
+    margin-top: auto;
+}
+
+.box-title-top
+{
+    font-size: 20px;
+    font-weight: 600;
+    font-style: normal;
+    font-stretch: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: #4a4a4a;
+    height: 49px;
+    line-height: 49px;
+    margin-left: 24px;
+}
+
+.box-title-sub span
+{
+padding-left: 20px;
+padding-bottom: 10px;
+
+}
+
+
+
+.box-title-sub:before
+{
+content: " ";
+    position: absolute;
+    display: block;
+    width: 30px;
+    height: 100%;
+    top: 0;
+    left: -16px;
+    background: #efefef;
+    -ms-transform: skew(160deg, 0deg);
+    -webkit-transform: skew(160deg, 0deg);
+    transform: skew(160deg, 0deg);
+}
+
+.content-wrapper-pwc
+{
+    border-radius: 4px;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 0 0 rgba(0, 0, 0, 0.03), 0px 10px 20px 0 rgba(0, 0, 0, 0.2);
+	width:844px;
+	height:500px;
+
+}
+
+#iconLeft
+{
+	width:50px;
+}
+
+#iconLeftIn
+{
+	width:40px;
+}
+
+.container-boutton
+{
+margin-top:40px;
+}
+
+.logo-top
+{
+padding-top:20px
+}
+
+
+#logo-pwc
+{
+height:110px
+}
+
+
+         .content-box-body
+         {
+         padding-top: 15px;
+         }
+		 
+        .FormPage, .workflow-content
+         {
+         display: none;
+         }
+         #retour-boutton
+         {
+         display:none;
+         }
+         .placeHolderBoutton
+         {
+         display: none;
+         }
+        
+	.align
+	{
+	height: 100%;
+	vertical-align: middle;
+	display: inline-block;
+	}	
+
+
+
+
+.ulLink
+{
+	list-style-type: none;
+}
+
+.ulLink:hover
+{
+	cursor: pointer;
+	color: red;
+}

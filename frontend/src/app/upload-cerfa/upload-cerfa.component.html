@@ -1,0 +1,46 @@
+<a routerLink="/">< Retour</a>
+<form (ngSubmit)="onSubmit(f)" #f="ngForm">
+	<div class="spacer20"></div>
+
+
+	<div class="row">
+
+	   <div class="col">
+	      <label for="associe">Associé responsable</label>
+	      <input type="text" [ngClass] = "{ 'is-valid':associeValid , 'is-invalid': !associeValid  }" class="associeProposition form-control" id="associe" name="associe" placeholder="John Doe" (keyup)="testAssocie(f.controls.associe.value)" (focus)="focusAssocieOnOff('on')" [(ngModel)]="associeChoosed" required>
+	      <div *ngIf="focusAssocie" class="reco" >
+	      		<ul >
+	      			<li *ngFor="let associe of associes" class="associeProposition" (click)="chooseAssocieInList(associe.name, associe.email)">{{associe.name}}</li>
+	      		</ul>
+	      </div>
+	   </div>
+	   <div class="col">
+	      <label for="email">Email de l'associé responsable</label>
+	      <input type="text" [ngClass] = "{ 'is-valid':emailValid , 'is-invalid': !emailValid  }" class="form-control" id="email" name="email" placeholder="John.doe@pwcavocats.com" (keyup)="testEmail(f.controls.email.value)"  [(ngModel)]="emailChoosed" required>
+	   </div>
+	</div>
+<div class="spacer20"></div>
+	<div class="row">
+	   <div class="col">
+	      <label for="groupe">Nom du groupe client</label>
+	      <input type="text" [ngClass] = "{ 'is-valid':groupeValid , 'is-invalid': !groupeValid  }" class="form-control" id="groupe" name="groupe" placeholder="" (keyup)="testGroupe(f.controls.groupe.value)" ngModel required>
+	   </div>
+	   <div class="col">
+	      <label for="OTP">OTP</label>
+	      <input type="text" class="form-control" id="OTP" name="OTP" placeholder=""  ngModel>
+	   </div>
+	</div>
+
+<div class="spacer20"></div>
+
+	<div class="form-group">
+		<span>Fichier de collecte</span>
+	   <div class="custom-file">
+
+	      <input type="file" class="custom-file-input" id="file" name="file" [ngClass] = "{ 'is-valid':fileChoosed , 'is-invalid': !fileChoosed  }"  (change)="handleFileInput($event)" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ngModel required>
+	      <label class="custom-file-label" for="validatedCustomFile">{{fileName}}</label>
+	   </div>
+	</div>
+	<div class="spacer10"></div>
+	<button class="btn btn-primary" type="submit" [disabled]="!emailValid || !associeValid || !groupeValid || !fileChoosed">Envoyer</button>
+</form>

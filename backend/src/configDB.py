@@ -9,7 +9,7 @@ CONNEXION_DB = {
     'database' : 'postgres',
     'user' : 'postgres',
     'password' : 'Poklm9222',
-    'host' : "db",
+    'host' : "localhost",
     'port' : '5432'
 }
 
