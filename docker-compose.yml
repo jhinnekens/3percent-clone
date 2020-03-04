@@ -6,3 +6,9 @@ services:
     command: python /usr/src/3papp/src/run.py
     ports:
       - 5000:5000
+  db:
+    image: postgres:10.12
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Poklm9222
+      - POSTGRES_DB=postgres

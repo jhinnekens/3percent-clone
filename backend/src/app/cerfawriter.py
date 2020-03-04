@@ -5,8 +5,8 @@ import pandas as pd
 from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader
 
-env = Environment(loader=FileSystemLoader('.'))
-template = env.get_template(ROOT + "/templates/table_annexe.html")
+env = Environment(loader=FileSystemLoader(ROOT))
+template = env.get_template("/templates/table_annexe.html")
 
 
 

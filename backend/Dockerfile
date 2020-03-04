@@ -18,4 +18,4 @@ RUN apt-get install -y graphviz-dev
 RUN pip install -r requirements.txt
 
 COPY . /usr/src/3papp/
-WORKDIR /usr/src/3app/src
+WORKDIR /usr/src/3papp/src
